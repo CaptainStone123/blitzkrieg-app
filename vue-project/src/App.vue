@@ -106,7 +106,7 @@ export default {
           }
         };
         try {
-          const response = await fetch('http://localhost:5000/completions', options);
+          const response = await fetch('https://blitzkrieg-node-server.vercel.app/completions', options);
           const data = await response.json();
           const conMessage = data.choices[0].message;
   
