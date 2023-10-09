@@ -21,7 +21,7 @@ export default {
     };
   },
   mounted() {
-        axios.get('http://localhost:3000/api/getNameFromMongoDB')
+        axios.get('http://localhost:5000/api/getNameFromMongoDB')
         .then(response => {
           this.Name = response.data.Name;
         })
@@ -36,7 +36,7 @@ export default {
       
       
       
-        axios.get('http://localhost:3000/api/getImageFromMongoDB')
+        axios.get('http://localhost:5000/api/getImageFromMongoDB')
             .then(response => {
                 const imageName = response.data.Image || 'stacy.png';
                 const imageSrc = `../src/assets/${imageName}`;
@@ -78,7 +78,7 @@ export default {
           return;
         }
         
-        axios.post('http://localhost:3000/api/saveConversation', {
+        axios.post('http://localhost:5000/api/saveConversation', {
           id: null,
           duration: this.conversation.filter(item => item.role === 'user').length, 
           details: userMessages, 
@@ -366,7 +366,7 @@ export default {
     };
   },
   mounted() {
-        axios.get('http://localhost:3000/api/getNameFromMongoDB')
+        axios.get('http://localhost:5000/api/getNameFromMongoDB')
         .then(response => {
           this.Name = response.data.Name;
         })
