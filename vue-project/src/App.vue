@@ -39,7 +39,7 @@ export default {
         axios.get('https://blitzkrieg-node-server.vercel.app/api/getImageFromMongoDB')
             .then(response => {
                 const imageName = response.data.Image || 'stacy.png';
-                const imageSrc = `./ ${imageName}`;
+                const imageSrc = `/${imageName}`;
 
                 console.log(imageSrc);
                 
@@ -160,7 +160,7 @@ export default {
       <div class="minichat-container">
         <ul class="minichat-header relative flex justify-between rounded-tl-[.5rem] rounded-tr-[.5rem] bg-[#003075] py-[.5rem] px-[.8rem]">
           <li class="flex items-center">
-             <img class="stacy" src="../src/assets/avatar.png" alt=""><span class="name"><b>{{Name}}</b></span>
+             <img class="stacy" :src="profileImageSrc" alt=""><span class="name"><b>{{Name}}</b></span>
           </li>
           <li class="flex items-center">
             <i class="fa-solid fa-repeat text-[.9rem] mx-[.8rem]"  @click="deleteAll"></i>
@@ -203,7 +203,7 @@ export default {
       <div class="chat-arrow"></div>
      </section>
     <section class="chat-btn-img">
-      <img src="../src/assets/avatar.png" alt="">
+      <img :src="profileImageSrc" alt="">
     </section>
    </div>
 </div>
