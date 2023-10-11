@@ -21,7 +21,7 @@ export default {
     };
   },
   mounted() {
-        axios.get('https://blitzkrieg-node-server.vercel.app/api/getNameFromMongoDB')
+        axios.get('https://uaai-api.vercel.app/api/getNameFromMongoDB')
         .then(response => {
           this.Name = response.data.Name;
         })
@@ -36,7 +36,7 @@ export default {
       
       
       
-        axios.get('https://blitzkrieg-node-server.vercel.app/api/getImageFromMongoDB')
+        axios.get('https://uaai-api.vercel.app/api/getImageFromMongoDB')
             .then(response => {
                 const imageName = response.data.Image || 'stacy.png';
                 const imageSrc = `/${imageName}`;
@@ -78,7 +78,7 @@ export default {
           return;
         }
         
-        axios.post('https://blitzkrieg-node-server.vercel.app/api/saveConversation', {
+        axios.post('https://uaai-api.vercel.app/api/saveConversation', {
           id: null,
           duration: this.conversation.filter(item => item.role === 'user').length, 
           details: userMessages, 
@@ -106,7 +106,7 @@ export default {
           }
         };
         try {
-          const response = await fetch('http://localhost:5000/completions', options);
+          const response = await fetch('https://uaai-api.vercel.app/completions', options);
           const data = await response.json();
           const conMessage = data.choices[0].message;
   
