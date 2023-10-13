@@ -74,12 +74,14 @@ export default {
         const userMessages = this.conversation;
         //const userMessages = this.conversation.filter(message => message.role === 'user');
 
-        if (userMessages.length === 0) {
+        //if (userMessages.length === 0) {
+        if (this.conversation.filter(item => item.role === 'user').length === 0) {
           console.error('No user messages to save.');
           return;
         }
         
         axios.post('https://uaai-api.vercel.app/api/saveConversation', {
+          id: null,
           duration: this.conversation.filter(item => item.role === 'user').length, 
           details: userMessages, 
         }, {
