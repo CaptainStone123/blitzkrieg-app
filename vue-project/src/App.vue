@@ -79,7 +79,6 @@ export default {
         }
         
         axios.post('https://uaai-api.vercel.app/api/saveConversation', {
-          id: null,
           duration: this.conversation.filter(item => item.role === 'user').length, 
           details: userMessages, 
         }, {
