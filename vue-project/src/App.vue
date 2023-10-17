@@ -1,22 +1,14 @@
 <script>
-
 import axios from 'axios';
-
 export default {
   name : 'Chatbox',
-  
   data() {
     return {
-      Name: '',
-      input: '',
-      isLoading: false,
-      error: null,
-      message: null,
-      messageUser: null,
-      uiData: {},
-      conversation:[],
-      isChatboxHidden: true,  
-      showChatMessage: false,
+      Name: '', input: '', 
+      isLoading: false, error: null,
+      message: null, messageUser: null,
+      uiData: {}, conversation:[],
+      isChatboxHidden: true, showChatMessage: false,
       profileImageSrc: '',
     };
   },
@@ -33,9 +25,6 @@ export default {
 
         // chat message
         setTimeout(this.showChatFor5Seconds, 8000);    4
-      
-      
-      
         axios.get('https://uaai-api.vercel.app/api/getImageFromMongoDB')
             .then(response => {
                 const imageName = response.data.Image || 'stacy.png';
@@ -49,8 +38,6 @@ export default {
                 console.error('Error fetching image:', error);
             });
       },
-
- 
   methods: {
     loadImage(src) {
       this.profileImageSrc = src;
@@ -106,7 +93,7 @@ export default {
           }
         };
         try {
-          const response = await fetch('https://uaai-api.vercel.app/completions', options);
+          const response = await fetch('http://localhost:5000/completions', options);
           const data = await response.json();
           const conMessage = data.choices[0].message;
   
@@ -146,7 +133,7 @@ export default {
   },
   created() {
       // Load the conversation from local storage when the component is created
-      // this.loadFromLocalStorage();
+      this.loadFromLocalStorage();
       window.addEventListener('beforeunload', this.saveConversationToServer);
     }
 };
@@ -155,51 +142,48 @@ export default {
 <template>
 <div>
   <section class="chat-box" :style="{ display: isChatboxHidden ? 'none' : 'block' }">
-    <div class="relative h-[100%] w-[100%]">
+    <div class="main-container">
+      <ul class="header">
+        <li>
+            <img class="stacy" :src="profileImageSrc" alt=""><span class="name"><b>{{Name}}</b></span>
+        </li>
+        <li>
+          <i class="fa-solid fa-repeat refresh-icon"  @click="deleteAll"></i>
+          <i class="fa-solid fa-xmark x-icon" @click="toggleChatbox"></i>
+        </li>
+      </ul>
 
-      <div class="minichat-container">
-        <ul class="minichat-header relative flex justify-between rounded-tl-[.5rem] rounded-tr-[.5rem] bg-[#003075] py-[.5rem] px-[.8rem]">
-          <li class="flex items-center">
-             <img class="stacy" :src="profileImageSrc" alt=""><span class="name"><b>{{Name}}</b></span>
-          </li>
-          <li class="flex items-center">
-            <i class="fa-solid fa-repeat text-[.9rem] mx-[.8rem]"  @click="deleteAll"></i>
-            <i class="fa-solid fa-xmark text-[1.1rem]" @click="toggleChatbox"></i>
-          </li>
-        </ul>
-
-        <div class="messagecontainer text-black flex flex-col flex-grow justify-start p-[.4rem]">
-            <div v-for="(message, index) in conversation" :key="index" class="message-container">
-              <div :class="[message.role === 'user' ? 'flex user-message justify-end' : 'flex bot-message justify-start ']">
-                 <span class="message text-[15px] mx-[10px]" v-html="message.content"></span>
-              </div>
+      <div class="main-message-container">
+          <div v-for="(message, index) in conversation" :key="index" class="message-container">
+            <div :class="[message.role === 'user' ? ' user-message' : 'bot-message']">
+                <span class="message" v-html="message.content"></span>
             </div>
-            <div v-if="isLoading" class="loading-message text-black m-[10px]">
-               <div class="loading-box">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-              </div>
+          </div>
+          <div v-if="isLoading" class="loading">
+            <div class="loading-box">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
             </div>
-        </div>
-        <hr>
-        <div class="minichatfooter flex ">
-          <span class="bg-[#f3f3f5] w-[100%]">
-            <input type="text" v-model="input" @keyup.enter="fetchData"  class="bg-transparent w-[85%] p-[.5rem] text-black text-[15px] focus:border-transparent  focus:outline-none focus:ring-0 placeholder-gray" placeholder="Input question here">
-            <button type="submit" @click="fetchData" class="w-[15%]">
-              <i class="fa-solid fa-paper-plane text-[gray]"></i>
-            </button>
-          </span>
-         
-        </div>
+          </div>
       </div>
-
+      <hr>
+      <div class="footer">
+        <span>
+          <input type="text" v-model="input" @keyup.enter="fetchData" placeholder="Input question here">
+          <button type="submit" @click="fetchData">
+            <i class="fa-solid fa-paper-plane send-icon"></i>
+          </button>
+        </span>
+        
+      </div>
     </div>
+
   </section>
 
   <div v-if="isChatboxHidden" @click="showChatbox" class="show-chat-btn">
     <section v-if="showChatMessage" class="chat-btn-text">
-      <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span> <!--NIER-101 changed "Stacy" to {{ Name }}-->
+      <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span> 
       <div class="chat-arrow"></div>
      </section>
     <section class="chat-btn-img">
@@ -212,29 +196,24 @@ export default {
 
 <style>
 .chat-btn-text[style*="none"] {
-  display: none; /* Hide the message when 'showChatMessage' is false */
+  display: none;  
 }
-
 .show-chat-btn {
-  position: absolute;
+  position:fixed;
   bottom: 25px; right: 25px;
   border: none;
   cursor: pointer;
   height: 75px;
-  display: flex;  justify-content: center; align-items: center;
+  display: flex; justify-content: center; align-items: center;
 }
 .chat-btn-text{
-  height: 100%;
-  display: flex;
-  align-items: center;
-  margin: .5rem;
+  height: 100%;  margin: .5rem;
+  display: flex; align-items: center;
 }
 .chat-btn-text span{
   background-color: white;
-  border-radius: 5px;
-  height: 100%;
-  display: flex;
-  justify-content: center; align-items: center;
+  border-radius: 5px; height: 100%;
+  display: flex; justify-content: center; align-items: center;
   padding: 1rem;
 }
 .chat-arrow{
@@ -246,8 +225,9 @@ export default {
 .chat-btn-img{
   height: 65px; width: 65px;
   background-color: white;
-  padding:10px;
-  border-radius: 50%;
+  padding:10px; border-radius: 50%;
+  box-shadow: 0 0 2px rgba(37, 37, 37, 0.5);
+
   display: flex; align-items: center; justify-content: center;
 }
 .chat-btn-img img{
@@ -255,85 +235,116 @@ export default {
 }
 
 /* CHATBOX  */
-.chat-box{
-  position: absolute;
-  bottom: 0; right: 8px;
-  height: 27rem; width: 20rem;
+.chat-box {
+  position: fixed; /* Use 'fixed' instead of 'absolute' */
+  bottom: 0;
+  right: 15px;
+  height: 450px;
+  width: 320px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
 
-.minichat-container{
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
+ 
+.main-container{
+  border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;
   background-color: white;
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   height: 100%;
 }
 
 /* CHAT HEADER */
+.main-container .header{
+  display: flex; justify-content: space-between; align-items: center;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background-color: #003075;
+  padding: 0 .8rem 0 .8rem;
+  height: 200px;
+}
+
+.main-container .header li{
+  display: flex; align-items: center;
+}
 
 .stacy {
-  width: 100px;
-  height: auto;
+  width: 100px; height: auto;
   position: absolute;
-  margin-top: -82px;
-  margin-left: -10px;
+  margin: -82px 0 0 -10px;
 }
 .name {
   margin-left: 95px;
 }
+.refresh-icon{
+  font-size: .9rem;
+  margin: 0 .8rem;
+}
+.x-icon{
+  font-size: 1.1rem;
+}
+/* MESSAGES */
 .message-container {
   margin-bottom: 1rem;
 }
+.user-message{
+  display: flex; justify-content:flex-end;
+}
 .user-message .message {
-  background-color: #0084ff;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  background-color: #0084ff; padding: 0.5rem; 
+  border-radius: 0.5rem; color: white;
+}
+.message{
+  font-size: 15px;
+  margin: 0 10px;
+}
+.bot-message{
+  display: flex; justify-content: flex-start;
 }
 .bot-message .message {
-  background-color: lightgray;
+  background-color: #e4e6eb;
   padding: 0.5rem;
   border-radius: 0.5rem;
   color: black;
 }
-.minichat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.main-message-container {
+  display: flex; flex-direction: column; flex-grow: 1; 
+  padding: 0.4rem; overflow-y: auto;
 }
+/* FOOTER */
+.footer {
+  padding: 0.5rem; display: flex;
+}
+.footer span{
+  background-color: #f3f3f5; width: 100%;
+}
+.footer span input{
+  background-color: transparent;
+  width: 85%; padding: 0.5rem; font-size: 15px;
+  border: none; outline: none; box-shadow: none;  
+  color: #000; placeholder: #888; 
+}
+.footer span button{ width: 15%;}
+.send-icon{ color: grey; }
 
-.messagecontainer {
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-.minichatfooter {
-  padding: 0.5rem;   
-}
- 
 /* LOADING BOX  */
+.loading{
+  color:black; margin: 10px;
+}
 .loading-box {
-  width: 50px;height: 30px;
-  display: flex; align-items: center; justify-content: center;
   background-color: #f0f0f0;
-  overflow: hidden; 
+  overflow: hidden; width: 50px;height: 30px;
+  display: flex; align-items: center; justify-content: center;
   border: 1px solid #ccc;border-radius: 25px; border: none;
 }
-
 .dot-container {
   display: flex; align-items: center; justify-content: center;
 }
-
 .dot {
   width: 5px; height: 5px;
-  background-color: #8c9095;
-  border-radius: 50%;
-  margin: 0 3px;
-  animation: jump 1s infinite alternate;
+  background-color: #8c9095; border-radius: 50%;
+  margin: 0 3px; animation: jump 1s infinite alternate;
 }
 .dot:nth-child(2) {animation-delay: 0.2s;}
 .dot:nth-child(3) {animation-delay: 0.4s;}
