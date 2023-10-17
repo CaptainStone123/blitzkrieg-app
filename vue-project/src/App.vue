@@ -265,7 +265,6 @@ export default {
   border-top-right-radius: 0.5rem;
   background-color: #003075;
   padding: 0 .8rem 0 .8rem;
-  height: 50px;
 }
 
 .main-container .header li{
@@ -280,11 +279,14 @@ export default {
 .name {
   margin-left: 95px;
 }
+ 
 .refresh-icon{
   font-size: .9rem;
+  padding: 11px 0;
   margin: 0 .8rem;
 }
 .x-icon{
+  padding: 11px 0;
   font-size: 1.1rem;
 }
 /* MESSAGES */
