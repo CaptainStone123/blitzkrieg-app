@@ -265,7 +265,7 @@ export default {
   border-top-right-radius: 0.5rem;
   background-color: #003075;
   padding: 0 .8rem 0 .8rem;
-  height: 200px;
+  height: 50px;
 }
 
 .main-container .header li{
