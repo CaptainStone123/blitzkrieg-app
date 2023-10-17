@@ -58,9 +58,12 @@ export default {
         }
       },
       saveConversationToServer() {
-        const userMessages = this.conversation.filter(message => message.role === 'user');
+        const userMessages = this.conversation;
+        //const userMessages = this.conversation.filter(message => message.role === 'user');
 
-        if (userMessages.length === 0) {
+        console.log(userMessages);
+        //if (userMessages.length === 0) {
+        if (this.conversation.filter(item => item.role === 'user').length === 0) {
           console.error('No user messages to save.');
           return;
         }
