@@ -96,17 +96,16 @@ export default {
           }
         };
         try {
-          const response = await fetch('http://localhost:5000/completions', options);
+          const response = await fetch('https://uaai-api.vercel.app/completions', options);
           const data = await response.json();
           const conMessage = data.choices[0].message;
   
           console.log("Testing")
-  
+
           this.messageUser = { role: "user", content: this.input};
           this.message = { role: conMessage.role, content: conMessage.content};
-          
           this.conversation.push(this.messageUser, this.message);
-          this.userInput = '';  
+          this.input = ' ';  
           this.saveToLocalStorage();
    
           console.log(this.conversation);
@@ -178,7 +177,6 @@ export default {
             <i class="fa-solid fa-paper-plane send-icon"></i>
           </button>
         </span>
-        
       </div>
     </div>
 
@@ -204,9 +202,7 @@ export default {
 .show-chat-btn {
   position:fixed;
   bottom: 25px; right: 25px;
-  border: none;
-  cursor: pointer;
-  height: 75px;
+  border: none; cursor: pointer; height: 75px;
   display: flex; justify-content: center; align-items: center;
 }
 .chat-btn-text{
