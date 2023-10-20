@@ -15,7 +15,7 @@ export default {
     };
   },
   mounted() {
-        axios.get(this.baseUrl+'getNameFromMongoDB')
+        axios.get(this.baseUrl+'api/getNameFromMongoDB')
         .then(response => {
           this.Name = response.data.Name;
         })
