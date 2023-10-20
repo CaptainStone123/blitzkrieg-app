@@ -4,6 +4,8 @@ export default {
   name : 'Chatbox',
   data() {
     return {
+      baseUrl: 'https://ua-ai-llm.vercel.app/',
+      localUrl: 'http://localhost:5000/',
       Name: '', input: '', 
       isLoading: false, error: null,
       message: null, messageUser: null,
@@ -13,7 +15,7 @@ export default {
     };
   },
   mounted() {
-        axios.get('https://uaai-api.vercel.app/api/getNameFromMongoDB')
+        axios.get(this.baseUrl+'getNameFromMongoDB')
         .then(response => {
           this.Name = response.data.Name;
         })
@@ -25,7 +27,7 @@ export default {
 
         // chat message
         setTimeout(this.showChatFor5Seconds, 8000);    4
-        axios.get('https://uaai-api.vercel.app/api/getImageFromMongoDB')
+        axios.get(this.baseUrl+'api/getImageFromMongoDB')
             .then(response => {
                 const imageName = response.data.Image || 'stacy.png';
                 const imageSrc = `/${imageName}`;
@@ -68,7 +70,7 @@ export default {
           return;
         }
         
-        axios.post('https://uaai-api.vercel.app/api/saveConversation', {
+        axios.post(this.baseUrl+'api/saveConversation', {
           id: null,
           duration: this.conversation.filter(item => item.role === 'user').length, 
           details: userMessages, 
@@ -96,7 +98,7 @@ export default {
           }
         };
         try {
-          const response = await fetch('https://uaai-api.vercel.app/completions', options);
+          const response = await fetch(this.localUrl+'completions', options);
           const data = await response.json();
           const conMessage = data.choices[0].message;
   
