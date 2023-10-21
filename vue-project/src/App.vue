@@ -4,10 +4,12 @@ export default {
   name : 'Chatbox',
   data() {
     return {
-      baseUrl: 'https://ua-ai-llm.vercel.app/', localUrl: 'http://localhost:5000/',
-      isLoading: false, error: null, message: null, messageUser: null,isChatboxHidden: true, showChatMessage: false,
+      baseUrl: 'https://ua-ai-llm.vercel.app/',localUrl: 'http://localhost:5000/',
       Name: '', input: '', profileImageSrc: '',
       uiData: {}, conversation:[],
+      isLoading: false, error: null,
+      message: null, messageUser: null,
+       isChatboxHidden: true, showChatMessage: false,
      };
   },
   mounted() {
@@ -27,23 +29,29 @@ export default {
       .then(response => {
           const imageName = response.data.Image || 'stacy.png';
           const imageSrc = `/${imageName}`;
+
           console.log(imageSrc);
+          
           this.loadImage(imageSrc);
       })
-    .catch(error => {console.error('Error fetching image:', error);});
-  },
-  methods: {
-    loadImage(src) {this.profileImageSrc = src;},
-    deleteAll() {
-      this.saveToLocalStorage();
-      this.saveConversationToServer();//added NIER 101
-      this.conversation = []; // Clear the conversation
+      .catch(error => {
+          console.error('Error fetching image:', error);
+      });
     },
+  methods: {
+    loadImage(src) {
+      this.profileImageSrc = src;
+    },
+    deleteAll() {
+        this.saveToLocalStorage();
+        this.saveConversationToServer();//added NIER 101
+        this.conversation = []; // Clear the conversation
+      },
     saveToLocalStorage() { 
       window.localStorage.setItem('conversation', JSON.stringify(this.conversation));
-      console.log(this.conversation)
     },
     loadFromLocalStorage() {
+      // Load the conversation from local storage
       const storedconversation = window.localStorage.getItem('conversation');
       if (storedconversation) {
         this.conversation = JSON.parse(storedconversation);
@@ -58,7 +66,6 @@ export default {
         console.error('No user messages to save.');
         return;
       }
-      
       axios.post(this.baseUrl+'api/saveConversation', {
         id: null,
         duration: this.conversation.filter(item => item.role === 'user').length, 
@@ -75,23 +82,25 @@ export default {
     },
     async fetchData() {
       this.isLoading = true;
-      const options = {
-        method: "POST",
-        body: JSON.stringify({
-          messages: this.input
-        }), 
-        headers: {"Content-Type": "application/json"}
-      };
       try {
+        this.messageUser = { role: "user", content: this.input};
+        this.conversation.push(this.messageUser);
+        this.saveToLocalStorage();
+        const options = {
+          method: "POST",
+          body: JSON.stringify({
+            messages: this.conversation
+          }), 
+          headers: {
+            "Content-Type": "application/json"
+          }
+        };
         const response = await fetch(this.localUrl+'completions', options);
         const data = await response.json();
         const conMessage = data.choices[0].message;
 
-        console.log("Testing")
-
-        this.messageUser = { role: "user", content: this.input};
         this.message = { role: conMessage.role, content: conMessage.content};
-        this.conversation.push(this.messageUser, this.message);
+        this.conversation.push(this.message);
         this.input = ' ';  
         this.saveToLocalStorage();
   
@@ -102,59 +111,75 @@ export default {
         this.isLoading = false;
       }
     },
-    // Toggle the chatbox visibility
-    toggleChatbox() {this.isChatboxHidden = !this.isChatboxHidden;},
-    // Show the chatbox and hide the "click me to show" button
-    showChatbox() {this.isChatboxHidden = false;},
+ 
+    toggleChatbox() {
+      // Toggle the chatbox visibility
+      this.isChatboxHidden = !this.isChatboxHidden;
+    },
+    showChatbox() {
+      // Show the chatbox and hide the "click me to show" button
+      this.isChatboxHidden = false;
+    },
     // chat message
-    showChatFor5Seconds() {this.showChatMessage = true;setTimeout(() => {this.showChatMessage = false;}, 5000);},
+    showChatFor5Seconds() {
+      this.showChatMessage = true;
+      setTimeout(() => {
+        this.showChatMessage = false;
+      }, 5000);
+    },
+    
   },
-  // Load the conversation from local storage when the component is created
-  created() {this.loadFromLocalStorage();window.addEventListener('beforeunload', this.saveConversationToServer);}
+  created() {
+      // Load the conversation from local storage when the component is created
+      this.loadFromLocalStorage();
+      window.addEventListener('beforeunload', this.saveConversationToServer);
+  }
 };
 </script>
 
 <template>
-<div>
-  <section class="chat-box" :style="{ display: isChatboxHidden ? 'none' : 'block' }">
-    <div class="main-container">
-      <ul class="header">
-        <li> <img class="stacy" :src="profileImageSrc" alt=""><span class="name"><b>{{Name}}</b></span> </li>
-        <li><i class="fa-solid fa-repeat refresh-icon"  @click="deleteAll"></i> <i class="fa-solid fa-xmark x-icon" @click="toggleChatbox"></i></li>
-      </ul>
-      <div class="main-message-container">
-          <div v-for="(message, index) in conversation" :key="index" class="message-container">
-            <div :class="[message.role === 'user' ? ' user-message' : 'bot-message']">
-                <span class="message" v-html="message.content"></span>
+  <div>
+    <section class="chat-box" :style="{ display: isChatboxHidden ? 'none' : 'block' }">
+      <div class="main-container">
+        <ul class="header">
+          <li><img class="stacy" :src="profileImageSrc" alt=""><span class="name"><b>{{Name}}</b></span></li>
+          <li><i class="fa-solid fa-repeat refresh-icon"  @click="deleteAll"></i><i class="fa-solid fa-xmark x-icon" @click="toggleChatbox"></i></li>
+        </ul>
+        <div class="main-message-container">
+            <div v-for="(message, index) in conversation" :key="index" class="message-container">
+              <div :class="[message.role === 'user' ? ' user-message' : 'bot-message']">
+                  <span class="message" v-html="message.content"></span>
+              </div>
             </div>
-          </div>
-          <div v-if="isLoading" class="loading">
-            <div class="loading-box">
-              <span class="dot"></span> <span class="dot"></span> <span class="dot"></span>
+            <div v-if="isLoading" class="loading">
+              <div class="loading-box"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
-          </div>
+        </div>
+        <hr>
+        <div class="footer">
+          <span>
+            <input type="text" v-model="input" @keyup.enter="fetchData" placeholder="Input question here">
+            <button type="submit" @click="fetchData">
+              <i class="fa-solid fa-paper-plane send-icon"></i>
+            </button>
+          </span>
+        </div>
       </div>
-      <hr>
-      <div class="footer">
-        <span>
-          <input type="text" v-model="input" @keyup.enter="fetchData" placeholder="Input question here">
-          <button type="submit" @click="fetchData"> <i class="fa-solid fa-paper-plane send-icon"></i> </button>
-        </span>
-      </div>
-    </div>
-  </section>
-
-  <div v-if="isChatboxHidden" @click="showChatbox" class="show-chat-btn">
-    <section v-if="showChatMessage" class="chat-btn-text">
-      <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span> 
-      <div class="chat-arrow"></div>
+  
     </section>
-    <section class="chat-btn-img">
-      <img :src="profileImageSrc" alt="">
-    </section>
-   </div>
-</div>
-</template>
+  
+    <div v-if="isChatboxHidden" @click="showChatbox" class="show-chat-btn">
+      <section v-if="showChatMessage" class="chat-btn-text">
+        <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span> 
+        <div class="chat-arrow"></div>
+       </section>
+      <section class="chat-btn-img">
+        <img :src="profileImageSrc" alt="">
+      </section>
+     </div>
+  </div>
+   
+  </template>
 
 <style>
 .chat-btn-text[style*="none"] {display: none;}
