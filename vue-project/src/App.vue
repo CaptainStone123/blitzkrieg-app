@@ -4,12 +4,10 @@ export default {
   name : 'Chatbox',
   data() {
     return {
-      baseUrl: 'https://ua-ai-llm.vercel.app/',localUrl: 'http://localhost:5000/',
-      Name: '', input: '', profileImageSrc: '',
       uiData: {}, conversation:[],
-      isLoading: false, error: null,
-      message: null, messageUser: null,
-       isChatboxHidden: true, showChatMessage: false,
+      baseUrl: 'https://ua-ai-llm.vercel.app/',localUrl: 'http://localhost:5000/',
+      initialMessage: `Hello! you can ask me if you have any questions concerning the university`, Name: '', input: '', profileImageSrc: '',
+      isLoading: false, error: null,message: null, messageUser: null,isChatboxHidden: true, showChatMessage: false,
      };
   },
   mounted() {
@@ -29,9 +27,7 @@ export default {
       .then(response => {
           const imageName = response.data.Image || 'stacy.png';
           const imageSrc = `/${imageName}`;
-
           console.log(imageSrc);
-          
           this.loadImage(imageSrc);
       })
       .catch(error => {
@@ -44,14 +40,14 @@ export default {
     },
     deleteAll() {
         this.saveToLocalStorage();
-        this.saveConversationToServer();//added NIER 101
-        this.conversation = []; // Clear the conversation
+        this.saveConversationToServer();
+        this.conversation = []; 
+        this.initialMessage = ''; 
       },
     saveToLocalStorage() { 
       window.localStorage.setItem('conversation', JSON.stringify(this.conversation));
     },
     loadFromLocalStorage() {
-      // Load the conversation from local storage
       const storedconversation = window.localStorage.getItem('conversation');
       if (storedconversation) {
         this.conversation = JSON.parse(storedconversation);
@@ -59,10 +55,8 @@ export default {
     },
     saveConversationToServer() {
       const userMessages = this.conversation;
-      //const userMessages = this.conversation.filter(message => message.role === 'user');
-      console.log(userMessages);
-      //if (userMessages.length === 0) {
-      if (this.conversation.filter(item => item.role === 'user').length === 0) {
+       console.log(userMessages);
+       if (this.conversation.filter(item => item.role === 'user').length === 0) {
         console.error('No user messages to save.');
         return;
       }
@@ -73,12 +67,8 @@ export default {
       }, {
         headers: {"Content-Type": "application/json"}
       })
-      .then(response => {
-        console.log('Conversation data saved on the server:', response.data);
-      })
-      .catch(error => {
-        console.error('Error saving conversation:', error);
-      });
+      .then(response => {console.log('Conversation data saved on the server:', response.data);})
+      .catch(error => {console.error('Error saving conversation:', error);});
     },
     async fetchData() {
       this.isLoading = true;
@@ -91,9 +81,7 @@ export default {
           body: JSON.stringify({
             messages: this.conversation
           }), 
-          headers: {
-            "Content-Type": "application/json"
-          }
+          headers: {"Content-Type": "application/json"}
         };
         const response = await fetch(this.localUrl+'completions', options);
         const data = await response.json();
@@ -111,26 +99,11 @@ export default {
         this.isLoading = false;
       }
     },
- 
-    toggleChatbox() {
-      // Toggle the chatbox visibility
-      this.isChatboxHidden = !this.isChatboxHidden;
-    },
-    showChatbox() {
-      // Show the chatbox and hide the "click me to show" button
-      this.isChatboxHidden = false;
-    },
-    // chat message
-    showChatFor5Seconds() {
-      this.showChatMessage = true;
-      setTimeout(() => {
-        this.showChatMessage = false;
-      }, 5000);
-    },
-    
+    toggleChatbox() {this.isChatboxHidden = !this.isChatboxHidden;},
+    showChatbox() {this.isChatboxHidden = false;},
+    showChatFor5Seconds() {this.showChatMessage = true;setTimeout(() => {this.showChatMessage = false;}, 5000);},
   },
   created() {
-      // Load the conversation from local storage when the component is created
       this.loadFromLocalStorage();
       window.addEventListener('beforeunload', this.saveConversationToServer);
   }
@@ -146,14 +119,19 @@ export default {
           <li><i class="fa-solid fa-repeat refresh-icon"  @click="deleteAll"></i><i class="fa-solid fa-xmark x-icon" @click="toggleChatbox"></i></li>
         </ul>
         <div class="main-message-container">
-            <div v-for="(message, index) in conversation" :key="index" class="message-container">
-              <div :class="[message.role === 'user' ? ' user-message' : 'bot-message']">
-                  <span class="message" v-html="message.content"></span>
-              </div>
+          <div class="message-container-initial" v-if="initialMessage.trim() !== ''">
+            <div class="bot-message">
+              <span class="message" v-html="initialMessage"></span>
             </div>
-            <div v-if="isLoading" class="loading">
-              <div class="loading-box"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          </div>
+          <div v-for="(message, index) in conversation" :key="index" class="message-container">
+            <div :class="[message.role === 'user' ? ' user-message' : 'bot-message']">
+              <span class="message" v-html="message.content"></span>
             </div>
+          </div>
+          <div v-if="isLoading" class="loading">
+            <div class="loading-box"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          </div>
         </div>
         <hr>
         <div class="footer">
@@ -165,7 +143,6 @@ export default {
           </span>
         </div>
       </div>
-  
     </section>
   
     <div v-if="isChatboxHidden" @click="showChatbox" class="show-chat-btn">
@@ -178,8 +155,7 @@ export default {
       </section>
      </div>
   </div>
-   
-  </template>
+</template>
 
 <style>
 .chat-btn-text[style*="none"] {display: none;}
@@ -200,6 +176,7 @@ export default {
 .refresh-icon{font-size: .9rem; padding: 11px 0; margin: 0 .8rem;}
 .x-icon{padding: 11px 0; font-size: 1.1rem;}
 /* MESSAGES */
+.message-container-initial {margin-bottom: 1rem; margin-top:.6rem;}
 .message-container {margin-bottom: 1rem;}
 .user-message{display: flex; justify-content:flex-end;}
 .user-message .message {background-color: #0084ff; padding: 0.5rem; border-radius: 0.5rem; color: white;}
