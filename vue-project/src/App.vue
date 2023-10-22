@@ -54,22 +54,30 @@ export default {
       }
     },
     saveConversationToServer() {
-      const userMessages = this.conversation;
-       console.log(userMessages);
-       if (this.conversation.filter(item => item.role === 'user').length === 0) {
-        console.error('No user messages to save.');
-        return;
-      }
-      axios.post(this.baseUrl+'api/saveConversation', {
-        id: null,
-        duration: this.conversation.filter(item => item.role === 'user').length, 
-        details: userMessages, 
-      }, {
-        headers: {"Content-Type": "application/json"}
-      })
-      .then(response => {console.log('Conversation data saved on the server:', response.data);})
-      .catch(error => {console.error('Error saving conversation:', error);});
-    },
+        // const userMessages = this.conversation.filter(message => message.role === 'user');
+        const userMessages = this.conversation;
+
+        if (userMessages.length === 0) {
+          console.error('No user messages to save.');
+          return;
+        }
+        
+        axios.post(this.baseUrl+'api/saveConversation', {
+          id: null,
+          duration: this.conversation.filter(item => item.role === 'user').length, 
+          details: userMessages, 
+        }, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(response => {
+          console.log('Conversation data saved on the server:', response.data);
+        })
+        .catch(error => {
+          console.error('Error saving conversation:', error);
+        });
+      },
     async fetchData() {
       this.isLoading = true;
       try {
