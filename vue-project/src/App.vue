@@ -91,7 +91,7 @@ export default {
           }), 
           headers: {"Content-Type": "application/json"}
         };
-        const response = await fetch(this.baseUrl+'completions', options);
+        const response = await fetch(this.localUrl+'completions', options);
         const data = await response.json();
         const conMessage = data.choices[0].message;
 
@@ -122,8 +122,8 @@ export default {
   <div>
     <section class="chat-box" :style="{ display: isChatboxHidden ? 'none' : 'block' }">
       <div class="main-container">
-        <ul class="header">
-          <li><img class="stacy" :src="profileImageSrc" alt=""><span class="name"><b>{{Name}}</b></span></li>
+        <ul :class="[profileImageSrc === '/UA-Logo.png' ? 'header-ua-logo' : 'header']">
+          <li><img :src="profileImageSrc" alt="" :class="[profileImageSrc === '/UA-Logo.png' ? ' header-icon-ua-logo' : 'header-icon']"/> <span :class="[profileImageSrc === '/UA-Logo.png' ? ' name-ua-logo' : 'name']"><b>{{Name}}</b></span></li> 
           <li><i class="fa-solid fa-repeat refresh-icon"  @click="deleteAll"></i><i class="fa-solid fa-xmark x-icon" @click="toggleChatbox"></i></li>
         </ul>
         <div class="main-message-container">
@@ -158,7 +158,8 @@ export default {
         <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span> 
         <div class="chat-arrow"></div>
        </section>
-      <section class="chat-btn-img">
+      <!-- <section class="chat-btn-img" > -->
+      <section :class="[profileImageSrc === '/UA-Logo.png' ? 'chat-btn-img-ua-logo' : 'chat-btn-img']">
         <img :src="profileImageSrc" alt="">
       </section>
      </div>
@@ -166,6 +167,7 @@ export default {
 </template>
 
 <style>
+
 .chat-btn-text[style*="none"] {display: none;}
 .show-chat-btn {position:fixed;bottom: 25px; right: 25px;border: none; cursor: pointer; height: 75px;display: flex; justify-content: center; align-items: center;}
 .chat-btn-text{height: 100%;  margin: .5rem;display: flex; align-items: center;}
@@ -173,13 +175,20 @@ export default {
 .chat-arrow{width: 5px; height: 5px;border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 20px solid white; transform: rotate(90deg);}
 .chat-btn-img{height: 65px; width: 65px;background-color: white;padding:10px; border-radius: 50%;box-shadow: 0 0 2px rgba(37, 37, 37, 0.5);display: flex; align-items: center; justify-content: center;}
 .chat-btn-img img{height: 55px;}
+.chat-btn-img-ua-logo img{height: 65px;width: 65px;}
 /* CHATBOX  */
 .chat-box {position: fixed; bottom: 0; right: 15px; width: 320px; height: 450px;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); color: white; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;}
 .main-container{border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;background-color: white; display: flex; flex-direction: column; height: 100%;}
 /* CHAT HEADER */
+.header{height: 38.5px;}
+.header-ua-logo{height: 52px;}
 .main-container .header{display: flex; justify-content: space-between; align-items: center;border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background-color: #003075;padding: 0 .8rem 0 .8rem;}
+.main-container .header-ua-logo{display: flex; justify-content: space-between; align-items: center;border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background-color: #003075;padding: 0 .8rem 0 .8rem;}
 .main-container .header li{display: flex; align-items: center;}
-.stacy {width: 100px; height: auto;position: absolute;margin: -82px 0 0 -10px;}
+.main-container .header-ua-logo li{display: flex; align-items: center;}
+.header-icon {width: 100px; height: auto;position: absolute;margin: -82px 0 0 -10px;}
+.header-icon-ua-logo {width: 40px; position: relative; margin: 0;}
+.name-ua-logo {margin-left: 10px; font-size: 1.2rem;}
 .name {margin-left: 95px;}
 .refresh-icon{font-size: .9rem; padding: 11px 0; margin: 0 .8rem;}
 .x-icon{padding: 11px 0; font-size: 1.1rem;}
@@ -190,7 +199,7 @@ export default {
 .user-message .message {background-color: #0084ff; padding: 0.5rem; border-radius: 0.5rem; color: white;}
 .message{font-size: 15px; margin: 0 10px;}
 .bot-message{display: flex; justify-content: flex-start;}
-.bot-message .message {background-color: #e4e6eb;padding: 0.5rem;border-radius: 0.5rem;color: black;}
+.bot-message .message {background-color: #e4e6eb;padding: 0.5rem;border-radius: 0.5rem;color: black; }
 .main-message-container {display: flex; flex-direction: column; flex-grow: 1; padding: 0.4rem; overflow-y: auto;}
 /* FOOTER */
 .footer {padding: 0.5rem; display: flex;}
