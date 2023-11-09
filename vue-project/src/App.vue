@@ -91,7 +91,7 @@ export default {
           }), 
           headers: {"Content-Type": "application/json"}
         };
-        const response = await fetch('https://ua-ai-completions.vercel.app/completions', options);
+        const response = await fetch('https://ua-ai-completions.vercel.app/api/completions', options);
         const data = await response.json();
         const conMessage = data.choices[0].message;
 
