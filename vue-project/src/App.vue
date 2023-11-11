@@ -27,7 +27,6 @@ export default {
       .then(response => {
           const imageName = response.data.Image || 'stacy.png';
           const imageSrc = `/${imageName}`;
-          console.log(imageSrc);
           this.loadImage(imageSrc);
       })
       .catch(error => {
@@ -78,7 +77,8 @@ export default {
           console.error('Error saving conversation:', error);
         });
       },
-    async fetchData() {
+ 
+      async fetchData() {
       this.isLoading = true;
       try {
         this.messageUser = { role: "user", content: this.input};
@@ -87,20 +87,24 @@ export default {
         const options = {
           method: "POST",
           body: JSON.stringify({
-            messages: this.conversation
+            messages: this.input
           }), 
           headers: {"Content-Type": "application/json"}
         };
-        const response = await fetch(this.localUrl+'completions', options);
-        const data = await response.json();
-        const conMessage = data.choices[0].message;
+        const response = await fetch('https://ua-ai-completions.vercel.app/api/completions', options);
+        // console.log(response);
+        const msg = await response.json();
+        // console.log(msg);
+        // console.log(msg.msg);
+        const conMessage = msg.msg.choices[0].message;
+        // console.log(conMessage)
 
         this.message = { role: conMessage.role, content: conMessage.content};
         this.conversation.push(this.message);
         this.input = ' ';  
         this.saveToLocalStorage();
   
-        console.log(this.conversation);
+        // console.log(this.conversation);
         } catch (error) {
         this.error = 'An error occurred while fetching data.';
       } finally {
