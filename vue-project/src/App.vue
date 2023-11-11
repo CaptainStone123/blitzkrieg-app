@@ -94,7 +94,6 @@ export default {
         const response = await fetch('https://ua-ai-completions.vercel.app/api/completions', options);
         // console.log(response);
         const msg = await response.json();
-        // console.log(msg);
         // console.log(msg.msg);
         const conMessage = msg.msg.choices[0].message;
         // console.log(conMessage)
@@ -182,7 +181,7 @@ export default {
 .chat-btn-img-ua-logo img{height: 65px;width: 65px;}
 /* CHATBOX  */
 .chat-box {position: fixed; bottom: 0; right: 15px; width: 320px; height: 450px;box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); color: white; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;}
-.main-container{border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;background-color: white; display: flex; flex-direction: column; height: 100%;}
+.main-container{border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;background-color: white; display: flex; flex-direction: column; height: 100%; overflow-x: hidden;}
 /* CHAT HEADER */
 .header{height: 38.5px;}
 .header-ua-logo{height: 52px;}
@@ -199,10 +198,10 @@ export default {
 /* MESSAGES */
 .message-container-initial {margin-bottom: 1rem; margin-top:.6rem;}
 .message-container {margin-bottom: 1rem;}
-.user-message{display: flex; justify-content:flex-end;}
+.user-message{display: flex; justify-content:flex-end; width: 100%;}
 .user-message .message {background-color: #0084ff; padding: 0.5rem; border-radius: 0.5rem; color: white;}
 .message{font-size: 15px; margin: 0 10px;}
-.bot-message{display: flex; justify-content: flex-start;}
+.bot-message{display: flex; justify-content: flex-start; width: 100%;}
 .bot-message .message {background-color: #e4e6eb;padding: 0.5rem;border-radius: 0.5rem;color: black; }
 .main-message-container {display: flex; flex-direction: column; flex-grow: 1; padding: 0.4rem; overflow-y: auto;}
 /* FOOTER */
