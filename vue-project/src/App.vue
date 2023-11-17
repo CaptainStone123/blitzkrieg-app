@@ -61,7 +61,7 @@ export default {
           return;
         }
         
-        axios.post(this.baseUrl+'api/saveConversation', {
+        axios.post('https://ua-ai-completions.vercel.app/api/post/saveConversation', {
           id: null,
           duration: this.conversation.filter(item => item.role === 'user').length, 
           details: userMessages, 
