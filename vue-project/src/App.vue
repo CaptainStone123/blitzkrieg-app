@@ -91,7 +91,7 @@ export default {
           }), 
           headers: {"Content-Type": "application/json"}
         };
-        const response = await fetch('https://ua-ai-completions.vercel.app/api/completions', options);
+        const response = await fetch('https://serverless-three-ebon.vercel.app/api/completions', options);
         // console.log(response);
         const msg = await response.json();
         // console.log(msg.msg);
