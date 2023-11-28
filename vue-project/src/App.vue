@@ -34,6 +34,21 @@ export default {
       });
     },
   methods: {
+    handleSubmit() {
+      this.fetchData();
+      this.playPopSound();
+    },
+
+    playPopSound() {
+      const audioElement = new Audio("/pop-2.mp3");
+      try {
+        audioElement.play();
+        console.log("Audio played successfully.");
+        } catch (error) {
+        console.error("Error playing audio:", error.message);
+      }
+    },
+
     loadImage(src) {
       this.profileImageSrc = src;
     },
@@ -100,20 +115,42 @@ export default {
 
         this.message = { role: conMessage.role, content: conMessage.content};
         this.conversation.push(this.message);
+
+        this.playPopSound();
+
         this.input = ' ';  
         this.saveToLocalStorage();
   
         // console.log(this.conversation);
         } catch (error) {
-        this.error = 'An error occurred while fetching data.';
-      } finally {
-        this.isLoading = false;
-      }
+          this.error = 'An error occurred while fetching data.';
+        } finally {
+          this.isLoading = false;
+        }
     },
     toggleChatbox() {this.isChatboxHidden = !this.isChatboxHidden;},
     showChatbox() {this.isChatboxHidden = false;},
-    showChatFor5Seconds() {this.showChatMessage = true;setTimeout(() => {this.showChatMessage = false;}, 5000);},
+    showChatFor5Seconds() {
+      const audioElement = this.$refs.audio;
+
+  if (audioElement) {
+    try {
+      audioElement.play();
+    } catch (error) {
+      console.error('Error playing audio:', error.message);
+    }
+  } else {
+    console.error('Audio element not found.');
+  }
+
+  this.showChatMessage = true;
+
+  setTimeout(() => {
+    this.showChatMessage = false;
+  }, 5000);
+    },
   },
+
   created() {
       this.loadFromLocalStorage();
       window.addEventListener('beforeunload', this.saveConversationToServer);
@@ -123,6 +160,7 @@ export default {
 
 <template>
   <div>
+    <audio ref="audio" src="/pop-7.mp3"></audio>
     <section class="chat-box" :style="{ display: isChatboxHidden ? 'none' : 'block' }">
       <div class="main-container">
         <ul :class="[profileImageSrc === '/UA-Logo.png' ? 'header-ua-logo' : 'header']">
@@ -148,7 +186,7 @@ export default {
         <div class="footer">
           <span>
             <input type="text" v-model="input" @keyup.enter="fetchData" placeholder="Input question here">
-            <button type="submit" @click="fetchData">
+            <button type="submit" @click="handleSubmit">
               <i class="fa-solid fa-paper-plane send-icon"></i>
             </button>
           </span>
@@ -158,7 +196,7 @@ export default {
   
     <div v-if="isChatboxHidden" @click="showChatbox" class="show-chat-btn">
       <section v-if="showChatMessage" class="chat-btn-text">
-        <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span> 
+        <span>Hello I'm {{ Name }}! you can ask me if you have any questions</span>
         <div class="chat-arrow"></div>
        </section>
       <!-- <section class="chat-btn-img" > -->
