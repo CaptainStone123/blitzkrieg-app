@@ -5,7 +5,7 @@ export default {
   data() {
     return {
       uiData: {}, conversation:[],
-      baseUrl:'https://ua-ai-llm.vercel.app',
+      baseUrl:'https://uagpt-private-server.vercel.app',
       localUrl: 'http://localhost:3000/',
       initialMessage: `Hello! you can ask me if you have any questions concerning the university`, Name: '', input: '', profileImageSrc: '',
       isLoading: false, error: null,message: null, messageUser: null,isChatboxHidden: true, showChatMessage: false,
@@ -107,7 +107,7 @@ export default {
           }), 
           headers: {"Content-Type": "application/json"}
         };
-        const response = await fetch('https://ua-ai-llm.vercel.app/completions', options);
+        const response = await fetch(this.baseUrl+'/completions', options);
         // console.log(response);
         const msg = await response.json();
         // console.log(msg.msg);
