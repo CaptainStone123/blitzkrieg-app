@@ -5,7 +5,7 @@ export default {
   data() {
     return {
       uiData: {}, conversation:[],
-      baseUrl:'https://ua-ai-llm.vercel.app'
+      baseUrl:'https://ua-ai-llm.vercel.app',
       localUrl: 'http://localhost:3000/',
       initialMessage: `Hello! you can ask me if you have any questions concerning the university`, Name: '', input: '', profileImageSrc: '',
       isLoading: false, error: null,message: null, messageUser: null,isChatboxHidden: true, showChatMessage: false,
